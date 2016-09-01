@@ -155,19 +155,19 @@ function initPipeline() {
         .enter()
         .append("image")
         .attr("xlink:href", function (d, i) {
-            // console.log(d.type);
-            if (d.type == PIPELINE_START) {
-                // console.log(PIPELINE_START);
-                return "./svg/start.svg";
-            } else if (d.type == PIPELINE_ADD_STAGE) {
-                // console.log(PIPELINE_ADD_STAGE);
-                return "./svg/addStage.svg";
-            } else if (d.type == PIPELINE_END) {
-                // console.log(PIPELINE_END);
-                return "./svg/end.svg";
-            } else if (d.type == PIPELINE_STAGE) {
-                // console.log(PIPELINE_STAGE);
-                return "./svg/stage.svg";
+            switch(d.type){
+                case PIPELINE_START :
+                    return "./svg/start.svg";
+                    break;
+                case PIPELINE_ADD_STAGE :
+                    return "./svg/addStage.svg";
+                    break;
+                case PIPELINE_END :
+                    return "./svg/end.svg";
+                    break;
+                case PIPELINE_STAGE :
+                    return "./svg/stage.svg";
+                    break;
             }
         })
         .attr("id", function (d, i) {
@@ -201,40 +201,63 @@ function initPipeline() {
         .on("mouseover", function (d, i) {
             d3.select("#" + d.id)
                 .attr("xlink:href", function (d, i) {
-                    if (d.type == PIPELINE_START) {
-                        return "./svg/start-mouseover.svg";
-                    } else if (d.type == PIPELINE_ADD_STAGE) {
-                        return "./svg/addStage-mouseover.svg";
-                    } else if (d.type == PIPELINE_END) {
-                        return "./svg/end.svg";
-                    } else if (d.type == PIPELINE_STAGE) {
-                        return "./svg/stage-mouseover.svg";
+
+                    switch(d.type){
+                        case PIPELINE_START :
+                            return "./svg/start-mouseover.svg";
+                            break;
+                        case PIPELINE_ADD_STAGE :
+                            return "./svg/addStage-mouseover.svg";
+                            break;
+                        case PIPELINE_END :
+                            return "./svg/end.svg";
+                            break;
+                        case PIPELINE_STAGE :
+                            return "./svg/stage-mouseover.svg";
+                            break;
                     }
+
+                  
                 });
         })
         .on("mouseout", function (d, i) {
             d3.select("#" + d.id)
                 .attr("xlink:href", function (d, i) {
-                    if (d.type == PIPELINE_START) {
-                        return "./svg/start.svg";
-                    } else if (d.type == PIPELINE_ADD_STAGE) {
-                        return "./svg/addStage.svg";
-                    } else if (d.type == PIPELINE_END) {
-                        return "./svg/end.svg";
-                    } else if (d.type == PIPELINE_STAGE) {
-                        return "./svg/stage.svg";
+                
+                    switch(d.type){
+                        case PIPELINE_START :
+                            return "./svg/start.svg";
+                            break;
+                        case PIPELINE_ADD_STAGE :
+                            return "./svg/addStage.svg";
+                            break;
+                        case PIPELINE_END :
+                            return "./svg/end.svg";
+                            break;
+                        case PIPELINE_STAGE :
+                            return "./svg/stage.svg";
+                            break;
                     }
+
                 });
         })
         .on("click", function (d, i) {
-            if (d.type == PIPELINE_START) {
-                clickStart(this, d, i);
-            } else if (d.type == PIPELINE_ADD_STAGE) {
-                clickAddStage(this, d, i);
-            } else if (d.type == PIPELINE_END) {
-            } else if (d.type == PIPELINE_STAGE) {
-                clickStage(this, d, i);
+       
+            switch(d.type){
+                case PIPELINE_START :
+                    clickStart(this, d, i);
+                    break;
+                case PIPELINE_ADD_STAGE :
+                    clickAddStage(this, d, i);
+                    break;
+                case PIPELINE_END :
+                    break;
+                case PIPELINE_STAGE :
+                    clickStage(this, d, i);
+                    break;
             }
+
+
         });
 }
 
@@ -283,11 +306,7 @@ function initAction() {
                 .data(d.actions).enter()
                 .append("image")
                 .attr("xlink:href", function (ad, ai) {
-                    if (ai % 2 == 0) {
-                        return "./svg/action-bottom.svg";
-                    } else {
-                        return "./svg/action-top.svg";
-                    }
+                    return ai % 2 == 0 ? "./svg/action-bottom.svg" : "./svg/action-top.svg";
                 })
                 .attr("id", function (ad, ai) {
                     return ad.id;
@@ -312,30 +331,18 @@ function initAction() {
                     return "translate(" + ad.translateX + "," + ad.translateY + ")";
                 })
                 .on("mouseover", function (ad, ai) {
-                    if (ai % 2 == 0) {
-                        d3.select("#" + ad.id)
+                    d3.select("#" + ad.id)
                             .attr("xlink:href", function (ad, ai) {
-                                return "./svg/action-bottom-mouseover.svg";
+                                return ai % 2 == 0 ? "./svg/action-bottom-mouseover.svg" : "./svg/action-top-mouseover.svg";
                             });
-                    } else {
-                        d3.select("#" + ad.id)
-                            .attr("xlink:href", function (ad, ai) {
-                                return "./svg/action-top-mouseover.svg";
-                            });
-                    }
+
                 })
                 .on("mouseout", function (ad, ai) {
-                    if (ai % 2 == 0) {
-                        d3.select("#" + ad.id)
+
+                    d3.select("#" + ad.id)
                             .attr("xlink:href", function (ad, ai) {
-                                return "./svg/action-bottom.svg";
+                                return ai % 2 == 0 ? "./svg/action-bottom.svg" : "./svg/action-top.svg";
                             });
-                    } else {
-                        d3.select("#" + ad.id)
-                            .attr("xlink:href", function (ad, ai) {
-                                return "./svg/action-top.svg";
-                            });
-                    }
                 })
                 .on("click", function (ad, ai) {
                     clickAction(this, ad, ai);
@@ -471,13 +478,13 @@ function initLine() {
                 .data(d.actions).enter()
                 .append("path")
                 .attr("d", function (ad, ai) {
-                    if (ai % 2 == 0) {
-                        lineView[action2StageLineViewId]
+
+                    lineView[action2StageLineViewId]
                             .append("path")
                             .attr("d", function (fd, fi) {
                                 return diagonal({
-                                    source: {x: ad.translateX + 15, y: ad.translateY + 25},
-                                    target: {x: ad.translateX + 15, y: ad.translateY + 40}
+                                    source: {x: ad.translateX + 15, y: ad.translateY + (ai % 2 == 0 ? 25 : 0)},
+                                    target: {x: ad.translateX + 15, y: ad.translateY + (ai % 2 == 0 ? 40 : -15)}
                                 });
                             })
                             .attr("fill", "none")
@@ -486,28 +493,10 @@ function initLine() {
                             .attr("stroke-dasharray", "2,2");
 
                         return diagonal({
-                            source: {x: ad.translateX + 15, y: ad.translateY},
-                            target: {x: ad.translateX + 15, y: ad.translateY - 50}
+                            source: {x: ad.translateX + 15, y: ad.translateY + (ai % 2 == 0 ? 0 : 25)},
+                            target: {x: ad.translateX + 15, y: ad.translateY + (ai % 2 == 0 ? -50 : 75)}
                         });
-                    } else {
-                        lineView[action2StageLineViewId]
-                            .append("path")
-                            .attr("d", function (fd, fi) {
-                                return diagonal({
-                                    source: {x: ad.translateX + 15, y: ad.translateY + 0},
-                                    target: {x: ad.translateX + 15, y: ad.translateY - 15}
-                                });
-                            })
-                            .attr("fill", "none")
-                            .attr("stroke", "black")
-                            .attr("stroke-width", 1)
-                            .attr("stroke-dasharray", "2,2");
 
-                        return diagonal({
-                            source: {x: ad.translateX + 15, y: ad.translateY + 25},
-                            target: {x: ad.translateX + 15, y: ad.translateY + 75}
-                        });
-                    }
                 })
                 .attr("fill", "none")
                 .attr("stroke", "black")
