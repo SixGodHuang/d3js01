@@ -1,7 +1,3 @@
-$(function () {
-
-});
-
 var PIPELINE_START = "pipeline-start";
 var PIPELINE_END = "pipeline-end";
 var PIPELINE_ADD_STAGE = "pipeline-add-stage";
@@ -65,30 +61,7 @@ var pipelineData = [
         translateY: 0,
         setupData: {}
     },
-    // {
-    //     id: PIPELINE_STAGE + "-" + uuid.v1(),
-    //     type: PIPELINE_STAGE,
-    //     class: PIPELINE_STAGE,
-    //     drawX: 0,
-    //     drawY: 0,
-    //     width: 0,
-    //     height: 0,
-    //     translateX: 0,
-    //     translateY: 0,
-    //     actions: [],
-    //     setupData:{}
-    // }, {
-    //     id: PIPELINE_STAGE + "-" + uuid.v1(),
-    //     type: PIPELINE_STAGE,
-    //     class: PIPELINE_STAGE,
-    //     drawX: 0,
-    //     drawY: 0,
-    //     width: 0,
-    //     height: 0,
-    //     translateX: 0,
-    //     translateY: 0,
-    //     actions: []
-    // },
+   
     {
         id: "pipeline-add-stage" + "-" + uuid.v1(),
         type: PIPELINE_ADD_STAGE,
