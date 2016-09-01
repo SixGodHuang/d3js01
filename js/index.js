@@ -289,16 +289,20 @@ function initAction() {
 
     actionsView.selectAll("image").remove();
 
+
     //Action
     pipelineView.selectAll("image").each(function (d, i) {
         if (d.type == PIPELINE_STAGE && d.actions != null && d.actions.length > 0) {
             var actionViewId = "action" + "-" + d.id;
 
-            actionView[actionViewId] = actionsView.append("g")
-                .attr("width", svgWidth)
-                .attr("height", svgHeight)
-                .attr("id", actionViewId);
+            if(!actionsView.select("g")[0][0]){
 
+                actionView[actionViewId] = actionsView.append("g")
+                    .attr("width", svgWidth)
+                    .attr("height", svgHeight)
+                    .attr("id", actionViewId);
+
+            }
             var actionStartX = d.translateX + 7.5;
             var actionStartY = d.translateY;
 
