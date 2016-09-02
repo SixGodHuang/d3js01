@@ -865,3 +865,45 @@
     color: $navbar-default-link-color;
   }
 }
+
+
+.hotbox {
+  font-family: Arial,"Hiragino Sans GB","Microsoft YaHei","WenQuanYi Micro Hei",sans-serif;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+
+  .state{
+    position: absolute;
+    overflow: visible;
+    display: none;
+
+    .ring{
+      .button{
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        text-align:center;
+        font-size: 14px;
+        border-radius: 100%;
+        box-shadow: 0 0 30px rgba(0,0,0,.3)
+      }
+    }
+
+
+    .button{
+        cursor: default;
+        overflow: hidden;
+        background: #F9F9F9;
+    }
+
+    .button.enabled{
+          background: #fff;
+    }
+
+  }
+
+  .state.main{display: block;}
+}
