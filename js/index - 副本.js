@@ -578,7 +578,7 @@ function clickStage(sView, sd, si) {
                 {
                     id: PIPELINE_ACTION + "-" + uuid.v1(),
                     type: PIPELINE_ACTION,
-                    class: PIPELINE_ACTION,
+                    class:  ,
                     drawX: 0,
                     drawY: 0,
                     width: 0,

@@ -534,7 +534,26 @@ function clickStage(sView, sd, si) {
 
     var offset = $(sView).offset();
 
-    $(".state.main").css({left:offset.left,top:offset.top-60});
+   
+    bttonView({
+        x:offset.left,
+        y:offset.top
+    });
+}
+
+
+function bttonView(options){
+    var $hotBox =  $(".state.main"),
+        $addButton = $hotBox.find("#addButton"),
+        $delButton = $hotBox.find("#delButton"),
+        $closeButton = $hotBox.find("#closeButton");
+
+    $hotBox.css({left:options.left,top:options.top-60});
+
+
+     $closeButton.on("click",function(){
+        $hotBox.hide();
+     });
 }
 
 function clickStart(sView, sd, si) {
