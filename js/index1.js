@@ -89,6 +89,11 @@ var pipelineData = [
     }
 ]
 
+var drag = d3.behavior.drag()
+    .origin(function(d) { return d; })
+    .on("dragstart",dragstarted);
+
+
 $(document).ready(function () {
 
     $("#div-d3-main-svg").height($("main").height() / 1.5);
@@ -98,6 +103,8 @@ $(document).ready(function () {
     var zoom = d3.behavior.zoom()
         .on("zoom", zoomed);
 
+    
+
     svg = d3.select("#div-d3-main-svg")
         .on("touchstart", nozoom)
         .on("touchmove", nozoom)
@@ -106,9 +113,12 @@ $(document).ready(function () {
         .attr("height", svgHeight)
         .style("fill", "white");
 
-    g = svg.append("g");
-        //.call(zoom)
-        //.on("dblclick.zoom", null);
+
+
+
+    g = svg.append("g")
+        .call(zoom)
+        .on("dblclick.zoom", null);
 
     svgMainRect = g.append("rect")
         .attr("width", svgWidth)
@@ -200,7 +210,7 @@ function initPipeline() {
         })
         .on("mousedown",function(d,i){
             if (d.type == PIPELINE_START) {
-              dragDropSetPath(d,i);
+                dragDropSetPath(d,i);
             }
 
         })
@@ -241,10 +251,12 @@ function initPipeline() {
             } else if (d.type == PIPELINE_STAGE) {
                 clickStage(this, d, i);
             }
-        });
+        }).call(drag);
 }
 
 function clickAddStage(d, i) {
+
+
     //add stage data
     pipelineData.splice(
         pipelineData.length - 2,
@@ -318,6 +330,7 @@ function initAction() {
                     return "translate(" + ad.translateX + "," + ad.translateY + ")";
                 })
                 .on("mousedown",function(ad,ai){
+
                     dragDropSetPath(ad,ai);
                 })
                 .on("mouseover", function (ad, ai) {
@@ -348,7 +361,7 @@ function initAction() {
                 })
                 .on("click", function (ad, ai) {
                     clickAction(this, ad, ai);
-                });
+                }).call(drag);
         }
 
     });
@@ -364,15 +377,10 @@ function initLine() {
 
     var pipelineLineViewId = "pipeline-line-view";
 
-
-
-
     lineView[pipelineLineViewId] = linesView.append("g")
         .attr("width", svgWidth)
         .attr("height", svgHeight)
         .attr("id", pipelineLineViewId);
-
-
 
     pipelineView.selectAll("image").each(function (d, i) {
 
@@ -463,29 +471,39 @@ function initLine() {
 
 
 function dragDropSetPath(thisData,thisIndex){
-    var  _path =  d3.select("#pipeline-line-view").append("path").attr("class","drag-drop-line");
+    var  _path =  d3.select("#pipeline-line-view").append("path").attr("class","drag-drop-line"),
+         _startX = window.event.pageX,
+         _startY = window.event.pageY;
+    
+
     document.onmousemove = function(e){
     
-    _path.attr("d", getPathData({x:thisData.translateX,y:thisData.translateY},{x:e.pageX-60,y:e.pageY-165}))
-        .attr("fill", "none")
-        .attr("stroke-opacity", "0.2")
-        .attr("stroke", "green")
-        .attr("stroke-width", 15);
+
+        var diffX = e.pageX - _startX,
+            diffY = e.pageY - _startY;
+
+        _path.attr("d", getPathData({x:thisData.translateX,y:thisData.translateY+10},{x:(thisData.translateX + diffX ),y:(thisData.translateY + diffY + 10)}))
+            .attr("fill", "none")
+            .attr("stroke-opacity", "0.2")
+            .attr("stroke", "green")
+            .attr("stroke-width", 15);
     }
     document.onmouseup = function (e){
         document.onmousemove = null;   
         document.onmouseup = null; 
         d3.select(".drag-drop-line").remove();
 
-        var _data = d3.select(e.target)[0][0].__data__;
-        var _class = thisData.id +_data.id;
+        try{
+            var _data = d3.select(e.target)[0][0].__data__;
+            var _class = thisData.id +_data.id;
+            if(d3.selectAll("."+_class)[0].length > 0){
+                alert("Repeated addition");
+                return false;
+            }
+        }catch(e){
 
-       if(d3.selectAll("."+_class)[0].length > 0){
-        alert("Repeated addition");
-        return false;
-       }
-
-
+        }
+        
 
         if(_data !== undefined && _data.translateX > thisData.translateX && _data.class === "pipeline-action"){
             setPath({
@@ -710,7 +728,6 @@ function clickStage(sView, sd, si) {
 function clickStart(sView, sd, si) {
 
     clickNodeData = sd;
-    console.log(clickNodeData);
     //show git form
     $.ajax({
         url: "./gitEdit.html",
@@ -882,6 +899,9 @@ function saveData(saveForm) {
 }
 
 
+function dragstarted(d) {
+  d3.event.sourceEvent.stopPropagation();  
+}
 
 
 $.fn.serializeObject = function () {
