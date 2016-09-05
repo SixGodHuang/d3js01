@@ -539,16 +539,16 @@ function clickStage(sView, sd, si) {
 
 
 function bttonView(options){
-    var $hotBox =  $(".state.main"),
+    var $hotBox =  $(".state"),
         $addButton = $hotBox.find("#addButton"),
         $delButton = $hotBox.find("#delButton"),
         $closeButton = $hotBox.find("#closeButton");
 
-    $hotBox.css({left:options.left,top:options.top-60});
-
+    $hotBox.addClass("main").css("left",options.x).css("top",options.y-60);
+  
 
      $closeButton.on("click",function(){
-        $hotBox.hide();
+        $hotBox.removeClass("main");
      });
 }
 
