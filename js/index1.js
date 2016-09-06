@@ -87,7 +87,103 @@ var pipelineData = [
                 translateY: 0,
                 actions: [],
                 setupData: {}
+            },
+             {
+                id: PIPELINE_ACTION + "-" + uuid.v1(),
+                type: PIPELINE_ACTION,
+                class: PIPELINE_ACTION,
+                drawX: 0,
+                drawY: 0,
+                width: 0,
+                height: 0,
+                translateX: 0,
+                translateY: 0,
+                actions: [],
+                setupData: {}
             }
+
+        ],
+        setupData:{}
+    },
+    {
+        id: PIPELINE_STAGE + "-" + uuid.v1(),
+        type: PIPELINE_STAGE,
+        class: PIPELINE_STAGE,
+        drawX: 0,
+        drawY: 0,
+        width: 0,
+        height: 0,
+        translateX: 0,
+        translateY: 0,
+        actions: [
+            {
+                id: PIPELINE_ACTION + "-" + uuid.v1(),
+                type: PIPELINE_ACTION,
+                class: PIPELINE_ACTION,
+                drawX: 0,
+                drawY: 0,
+                width: 0,
+                height: 0,
+                translateX: 0,
+                translateY: 0,
+                actions: [],
+                setupData: {}
+            },
+             {
+                id: PIPELINE_ACTION + "-" + uuid.v1(),
+                type: PIPELINE_ACTION,
+                class: PIPELINE_ACTION,
+                drawX: 0,
+                drawY: 0,
+                width: 0,
+                height: 0,
+                translateX: 0,
+                translateY: 0,
+                actions: [],
+                setupData: {}
+            }
+
+        ],
+        setupData:{}
+    },
+    {
+        id: PIPELINE_STAGE + "-" + uuid.v1(),
+        type: PIPELINE_STAGE,
+        class: PIPELINE_STAGE,
+        drawX: 0,
+        drawY: 0,
+        width: 0,
+        height: 0,
+        translateX: 0,
+        translateY: 0,
+        actions: [
+            {
+                id: PIPELINE_ACTION + "-" + uuid.v1(),
+                type: PIPELINE_ACTION,
+                class: PIPELINE_ACTION,
+                drawX: 0,
+                drawY: 0,
+                width: 0,
+                height: 0,
+                translateX: 0,
+                translateY: 0,
+                actions: [],
+                setupData: {}
+            },
+             {
+                id: PIPELINE_ACTION + "-" + uuid.v1(),
+                type: PIPELINE_ACTION,
+                class: PIPELINE_ACTION,
+                drawX: 0,
+                drawY: 0,
+                width: 0,
+                height: 0,
+                translateX: 0,
+                translateY: 0,
+                actions: [],
+                setupData: {}
+            }
+
         ],
         setupData:{}
     },
@@ -240,10 +336,10 @@ function initPipeline() {
 
         })
         .on("mouseover", function (d, i) {
-
             d3.select("#" + d.id)
                 .attr("xlink:href", function (d, i) {
                     if (d.type == PIPELINE_START) {
+                         mouseoverRelevantPipeline(d);
                         return "./svg/start-mouseover.svg";
                     } else if (d.type == PIPELINE_ADD_STAGE) {
                         return "./svg/addStage-mouseover.svg";
@@ -258,6 +354,7 @@ function initPipeline() {
             d3.select("#" + d.id)
                 .attr("xlink:href", function (d, i) {
                     if (d.type == PIPELINE_START) {
+                        mouseoutRelevantPipeline();
                         return "./svg/start.svg";
                     } else if (d.type == PIPELINE_ADD_STAGE) {
                         return "./svg/addStage.svg";
@@ -356,8 +453,8 @@ function initAction() {
                     return "translate(" + ad.translateX + "," + ad.translateY + ")";
                 })
                 .on("mousedown",function(ad,ai){
-
                     dragDropSetPath(ad,ai);
+                   
                 })
                 .on("mouseover", function (ad, ai) {
                     if (ai % 2 == 0) {
@@ -371,6 +468,7 @@ function initAction() {
                                 return "./svg/action-top-mouseover.svg";
                             });
                     }
+                    mouseoverRelevantPipeline(ad);
                 })
                 .on("mouseout", function (ad, ai) {
                     if (ai % 2 == 0) {
@@ -384,6 +482,7 @@ function initAction() {
                                 return "./svg/action-top.svg";
                             });
                     }
+                    mouseoutRelevantPipeline();
                 })
                 .on("click", function (ad, ai) {
                     clickAction(this, ad, ai);
@@ -490,12 +589,48 @@ function initLine() {
 }
 
 
+function mouseoverRelevantPipeline(thisData){
+    var pathAry = d3.selectAll("#pipeline-line-view path")[0];
+    pathAry.forEach(function(i){
+       try{
+            var _path = d3.select(i),
+                _class = _path.attr("class");
+            if(!!_class){
+                // _path.attr("stroke-opacity","0.1");
+            }
+           
+            if(_class.indexOf(thisData.id) == 0){
+                i.parentNode.appendChild(i);
+                _path.attr("stroke-opacity","1");
+            }
+       }catch(e){
+
+       }
+      
+    })
+}
+
+
+function mouseoutRelevantPipeline(){
+    var pathAry = d3.selectAll("#pipeline-line-view path")[0];
+    pathAry.forEach(function(i){
+        var _path = d3.select(i),
+             _class = _path.attr("class");
+        if(!!_class){
+            _path.attr("stroke-opacity","0.2");
+         }
+      
+    })
+}
+
+
+
 function dragDropSetPath(thisData,thisIndex){
     var  _path =  d3.select("svg>g").append("path").attr("class","drag-drop-line"),
          _startX = window.event.pageX,
          _startY = window.event.pageY;
     
- console.log(d3.event);
+ 
     document.onmousemove = function(e){
        
 
@@ -550,7 +685,14 @@ function setPath(options){
         .attr("stroke-opacity", "0.2")
         .attr("stroke", "green")
         .attr("stroke-width", 15)
-        .attr("class",options.defaultClass);
+        .attr("class",options.defaultClass)
+        .on("mouseover",function(){
+            this.parentNode.appendChild(this);
+            d3.select(this).attr("stroke-opacity","1");
+        })
+        .on("mouseout",function(){
+            d3.select(this).attr("stroke-opacity","0.2");
+        });
 
 }
 
@@ -561,7 +703,7 @@ function getPathData(startPoint,endPoint){
         xi = d3.interpolateNumber(x0, x1),
         x2 = xi(curvature),
         x3 = xi(1 - curvature),
-        y0 = startPoint.y + 45 / 2,
+        y0 = startPoint.y + 30 / 2,
         y1 = endPoint.y + 30 / 2;
 
     return "M" + x0 + "," + y0
