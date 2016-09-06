@@ -1,6 +1,3 @@
-$(function () {
-
-});
 
 var PIPELINE_START = "pipeline-start";
 var PIPELINE_END = "pipeline-end";
@@ -43,6 +40,8 @@ var svgButtonHeight = 30;
 var svg = null;
 var g = null;
 
+
+
 //This is the accessor function we talked about above
 var lineFunction = d3.svg.line()
     .x(function (d) {
@@ -65,7 +64,33 @@ var pipelineData = [
         translateY: 0,
         setupData: {}
     },
-    
+    {
+        id: PIPELINE_STAGE + "-" + uuid.v1(),
+        type: PIPELINE_STAGE,
+        class: PIPELINE_STAGE,
+        drawX: 0,
+        drawY: 0,
+        width: 0,
+        height: 0,
+        translateX: 0,
+        translateY: 0,
+        actions: [
+            {
+                id: PIPELINE_ACTION + "-" + uuid.v1(),
+                type: PIPELINE_ACTION,
+                class: PIPELINE_ACTION,
+                drawX: 0,
+                drawY: 0,
+                width: 0,
+                height: 0,
+                translateX: 0,
+                translateY: 0,
+                actions: [],
+                setupData: {}
+            }
+        ],
+        setupData:{}
+    },
     {
         id: "pipeline-add-stage" + "-" + uuid.v1(),
         type: PIPELINE_ADD_STAGE,
@@ -215,6 +240,7 @@ function initPipeline() {
 
         })
         .on("mouseover", function (d, i) {
+
             d3.select("#" + d.id)
                 .attr("xlink:href", function (d, i) {
                     if (d.type == PIPELINE_START) {
@@ -460,33 +486,29 @@ function initLine() {
         }
 
     });
-
-
-    //start to stage1
-   //setPath(pipelineLineViewId,{x:50,y:0},{x:257,y:477});
-   
-
    
 }
 
 
 function dragDropSetPath(thisData,thisIndex){
-    var  _path =  d3.select("#pipeline-line-view").append("path").attr("class","drag-drop-line"),
+    var  _path =  d3.select("svg>g").append("path").attr("class","drag-drop-line"),
          _startX = window.event.pageX,
          _startY = window.event.pageY;
     
-
+ console.log(d3.event);
     document.onmousemove = function(e){
-    
+       
 
         var diffX = e.pageX - _startX,
             diffY = e.pageY - _startY;
 
-        _path.attr("d", getPathData({x:thisData.translateX,y:thisData.translateY+10},{x:(thisData.translateX + diffX ),y:(thisData.translateY + diffY + 10)}))
+        console.log();
+
+        _path.attr("d", getPathData({x:_startX-80,y:_startY-185},{x:_startX + diffX -40,y:_startY + diffY -175}))
             .attr("fill", "none")
-            .attr("stroke-opacity", "0.2")
+            .attr("stroke-opacity", "1")
             .attr("stroke", "green")
-            .attr("stroke-width", 15);
+            .attr("stroke-width", 2);
     }
     document.onmouseup = function (e){
         document.onmousemove = null;   
@@ -539,7 +561,7 @@ function getPathData(startPoint,endPoint){
         xi = d3.interpolateNumber(x0, x1),
         x2 = xi(curvature),
         x3 = xi(1 - curvature),
-        y0 = startPoint.y + 30 / 2,
+        y0 = startPoint.y + 45 / 2,
         y1 = endPoint.y + 30 / 2;
 
     return "M" + x0 + "," + y0
@@ -673,8 +695,7 @@ function clickStage(sView, sd, si) {
             buttonView.selectAll("image").remove();
             pipelineData.splice(si, 1);
 
-            // console.log(pipelineData);
-
+          
             initPipeline();
             initAction();
         });
