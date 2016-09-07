@@ -692,6 +692,17 @@ function setPath(options){
         })
         .on("mouseout",function(){
             d3.select(this).attr("stroke-opacity","0.2");
+        })
+        .on("click",function(d){
+            $.ajax({
+                url: "./templates/pipelineEdit.html",
+                type: "GET",
+                cache: false,
+                success: function (data) {
+                    $("#pipeline-info-edit").html($(data));
+                    pipelineEdit(data);
+                }
+            });
         });
 
 }
@@ -714,13 +725,36 @@ function getPathData(startPoint,endPoint){
 
 
 
+function pipelineEdit(data){
+
+
+     d3.json("js/flare.json", function (nodes) {
+       
+        var opt = { 
+            change: function(data) { /* called on every change */ },
+            propertyclick: function(path) { /* called when a property is clicked with the JS path to that property */ }
+        };
+        /* opt.propertyElement = '<textarea>'; */ // element of the property field, <input> is default
+        /* opt.valueElement = '<textarea>'; */  // element of the value field, <input> is default
+        $('#importDiv').jsonEditor(nodes, opt);
+    });
+
+
+
+    
+    
+}
+
+
+
+
 function clickStage(sView, sd, si) {
 
     clickNodeData = sd;
 
     //show stage form
     $.ajax({
-        url: "./stageEdit.html",
+        url: "./templates/stageEdit.html",
         type: "GET",
         cache: false,
         success: function (data) {
@@ -893,7 +927,7 @@ function clickStart(sView, sd, si) {
     clickNodeData = sd;
     //show git form
     $.ajax({
-        url: "./gitEdit.html",
+        url: "./templates/gitEdit.html",
         type: "GET",
         cache: false,
         success: function (data) {
@@ -916,7 +950,7 @@ function clickAction(sView, sd, si) {
 
     //show git form
     $.ajax({
-        url: "./actionEdit.html",
+        url: "./templates/actionEdit.html",
         type: "GET",
         cache: false,
         success: function (data) {
