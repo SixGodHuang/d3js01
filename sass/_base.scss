@@ -932,11 +932,11 @@
 
   .value{
     background-color: #ECF3C3;
-    width: 100%;
+    
   }
 
   .property { 
-    width: 154px;
+    
     background-color: #B1C639;
     color: white;
     font-weight: bold;
@@ -956,6 +956,7 @@
     line-height: 20px;
     margin-top: 2px;
     position: relative;
+    clear:both;
   }
 
   .item:last-child { 
@@ -976,10 +977,16 @@
     height: 11px;
     display: inline-block;
     position:absolute;
-    left:160px;
+    left:-35px;
     top:5px;
     cursor: pointer;
+    color:#bbb;
   }
+
+  .deleter:hover{
+    color:#000;
+  }
+
 
   .checker { 
     width: 16px;
@@ -995,10 +1002,11 @@
   .change-type { 
     display: inline-block;
     position:absolute;
-    left:195px;
+    right:10%;
     top:0;
     cursor: pointer;
     line-height:26px;
+    color:#bbb;
   }
 
   .itype{
@@ -1030,8 +1038,11 @@
     width: 16px;
     height: 11px;
     display: inline-block;
-    margin-left: -15px;
+    z-index:9;
     cursor: pointer;
+    position:absolute;
+    left:-15px;
+    top:7px;
   }
 
   .item.expanded > .expander { 
@@ -1048,7 +1059,6 @@
   .item.array  > .property { background-color: #2D5B89; }
   .item.object > .property { background-color: #E17000; }
   .item.number > .property { background-color: #497B8D; }
-
 
 }
 

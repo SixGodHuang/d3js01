@@ -731,7 +731,21 @@ function setPath(options){
                 cache: false,
                 success: function (data) {
                     $("#pipeline-info-edit").html($(data));
-                    pipelineEdit(data);
+                    //pipelineEdit(data);
+
+                    $("#importJson").click(function(){
+                        
+                        var val = $("#importJsonText").val();
+                        var json;
+                        try{
+                            json = (JSON.parse(val));
+                            $('#importDiv').jsonEditor(json, {});
+                        }catch(e){
+                            console.log("Error in parsing json.");
+                            alert("Error in parsing json.");
+                        }
+
+                    });
                 }
             });
         });
