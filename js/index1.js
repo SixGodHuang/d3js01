@@ -210,6 +210,10 @@ var pipelineData = [
     }
 ]
 
+
+var linePathAry = [];
+
+
 var drag = d3.behavior.drag()
     .origin(function(d) { return d; })
     .on("dragstart",dragstarted);
@@ -330,8 +334,13 @@ function initPipeline() {
             }
         })
         .on("mousedown",function(d,i){
+
             if (d.type == PIPELINE_START) {
-                dragDropSetPath(d,i);
+                dragDropSetPath({
+                        "data" : d,
+                        "node" : i
+                    });
+                
             }
 
         })
@@ -375,6 +384,10 @@ function initPipeline() {
                 clickStage(this, d, i);
             }
         }).call(drag);
+
+
+        
+
 }
 
 function clickAddStage(d, i) {
@@ -453,7 +466,10 @@ function initAction() {
                     return "translate(" + ad.translateX + "," + ad.translateY + ")";
                 })
                 .on("mousedown",function(ad,ai){
-                    dragDropSetPath(ad,ai);
+                    dragDropSetPath({
+                        "data" : ad,
+                        "node" : ai
+                    });
                    
                 })
                 .on("mouseover", function (ad, ai) {
@@ -585,7 +601,10 @@ function initLine() {
         }
 
     });
-   
+ 
+   linePathAry.forEach(function(i){
+        setPath(i);
+   })
 }
 
 
@@ -625,25 +644,28 @@ function mouseoutRelevantPipeline(){
 
 
 
-function dragDropSetPath(thisData,thisIndex){
-    var  _path =  d3.select("svg>g").append("path").attr("class","drag-drop-line"),
-         _startX = window.event.pageX,
-         _startY = window.event.pageY;
+function dragDropSetPath(options){
+
     
- 
+    var thisData = options.data,
+        thisIndex = options.node;
+   
+
+    var  _path =  d3.select("svg>g").insert("path",":nth-child(2)").attr("class","drag-drop-line"),
+         _startX = $(window.event.target).offset().left,
+         _startY = $(window.event.target).offset().top,
+         _pageTitleHeight = $(".page-title").height();  
+
     document.onmousemove = function(e){
        
-
         var diffX = e.pageX - _startX,
             diffY = e.pageY - _startY;
 
-        console.log();
-
-        _path.attr("d", getPathData({x:_startX-80,y:_startY-185},{x:_startX + diffX -40,y:_startY + diffY -175}))
+        _path.attr("d", getPathData({x:_startX-60,y:_startY-(105+_pageTitleHeight)},{x:_startX + diffX -40,y:_startY + diffY -(130+_pageTitleHeight)}))
             .attr("fill", "none")
             .attr("stroke-opacity", "1")
             .attr("stroke", "green")
-            .attr("stroke-width", 2);
+            .attr("stroke-width", 10);
     }
     document.onmouseup = function (e){
         document.onmousemove = null;   
@@ -669,6 +691,15 @@ function dragDropSetPath(thisData,thisIndex){
                 endPoint : {x:_data.translateX,y:_data.translateY},
                 defaultClass : _class
             });
+
+            linePathAry.push({
+                pipelineLineViewId : "pipeline-line-view",
+                startPoint : {x:thisData.translateX,y:thisData.translateY},
+                endPoint : {x:_data.translateX,y:_data.translateY},
+                defaultClass : _class
+            });
+
+           
         } 
         
     }
@@ -737,11 +768,7 @@ function pipelineEdit(data){
         /* opt.propertyElement = '<textarea>'; */ // element of the property field, <input> is default
         /* opt.valueElement = '<textarea>'; */  // element of the value field, <input> is default
         $('#importDiv').jsonEditor(nodes, opt);
-    });
-
-
-
-    
+    });  
     
 }
 

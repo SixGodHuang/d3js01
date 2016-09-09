@@ -19,7 +19,7 @@
 //     $('#mydiv').jsonEditor(myjson, opt);
 
 (function( $ ) {
-
+    var outPut;
     $.fn.jsonEditor = function(json, options) {
         options = options || {};
         // Make sure functions or other non-JSON data types are stripped down.
@@ -48,6 +48,12 @@
         $(opt.target).on('blur focus', '.property, .value', function() {
             $(this).toggleClass('editing');
         });
+
+
+        $("#beautify").on("click",function(){
+            var jsonText = $("#jsonText").val();
+            $('#jsonText').val(JSON.stringify(JSON.parse(jsonText), null, 4));
+        })
     }
 
     function isObject(o) { return Object.prototype.toString.call(o) == '[object Object]'; }
@@ -120,6 +126,86 @@
         }
     }
 
+
+    function addDeleter(item,opt){
+        if (item.children('.deleter').length == 0) {
+            var deleter =   $('<span>',  { 'class': 'deleter fa fa-trash' });
+            deleter.bind('click', function() {
+                var item = $(this).parent();
+                var path = $(this).parent().data('path'); 
+                var key = $(this).siblings("input.property").attr("title");
+                var original =  feed(opt.original, (path ? path + '.' : '') + key);
+                $(this).parent().remove();
+                opt.onchange(parse(stringify(original)))
+            });
+            item.prepend(deleter);
+        }
+    }
+
+
+    function addChangeType(item,opt){
+        if (item.children('.change-type').length == 0) {
+            var changer =   $('<div class="change-type">'
+                            +'<span class="itype"></span>'
+                            +'<div class="type-items"><a>string</a>'
+                            +'<a>array</a>'
+                            +'<a>object</a>'
+                            +'</div></div>')
+            changer.find("a").bind('click', function() {
+                var type = $(this).text();
+                var typeItems = $(this).parents(".type-items");
+                var itype = typeItems.siblings(".itype");
+                var value = $(this).parents(".change-type").siblings("input.value");
+                var oldType = itype.text();
+                itype.text(type);
+                if(type == oldType){
+                    return false;
+                }
+
+                if(type == "string")value.val('""');
+                else if(type == "array") value.val("[]");
+                else if(type == "object") value.val("{}");
+
+                value.change();
+                typeItems.hide();
+            });
+            item.prepend(changer);
+        }
+    }
+
+
+    function addChecker(item,opt){
+        if (item.children('.checker').length == 0) {
+            var checker =   $('<span>',  { 'class': 'checker fa fa-square-o' });
+            checker.bind('click', function() {
+                var path = $(this).parent().data('path'); 
+
+                if($(this).hasClass("fa-check-square-o")){
+                    $(this).removeClass("fa-check-square-o").addClass("fa-square-o");
+                }else{
+                    $(this).removeClass("fa-square-o").addClass("fa-check-square-o");
+
+                    
+                }
+
+                
+
+                    var i = 0,
+                        parts = path.split('.');
+                    for (var len = parts.length; i < len - 1; i++) {
+                        outPut = opt[parts[i]];
+                    }
+
+                console.log(outPut);
+
+
+            });
+            item.prepend(checker);
+        }
+    }
+
+
+
     function addListAppender(item, handler) {
         var appender = $('<div>', { 'class': 'item appender' }),
             btn      = $('<button></button>', { 'class': 'property' });
@@ -142,12 +228,10 @@
 
         if (isObject(json)) {
             var i = 1, newName = "newKey";
-
             while (json.hasOwnProperty(newName)) {
                 newName = "newKey" + i;
                 i++;
             }
-
             json[newName] = null;
             return true;
         }
@@ -171,6 +255,15 @@
                 addExpander(item);
             }
             
+           
+            if(root.attr("class").indexOf("array") != -1){
+                property.attr("disabled","disabled");
+            }
+
+            addDeleter(item, opt);
+            addChangeType(item, opt);
+            addChecker(item,opt);
+
             item.append(property).append(value);
             root.append(item);
             
@@ -224,14 +317,13 @@
                 val = parse($(this).next().val()),
                 newKey = $(this).val(),
                 oldKey = $(this).attr('title');
-
             $(this).attr('title', newKey);
 
             feed(opt.original, (path ? path + '.' : '') + oldKey);
             if (newKey) feed(opt.original, (path ? path + '.' : '') + newKey, val);
 
             updateParents(this, opt);
-
+          
             if (!newKey) $(this).parent().remove();
             
             opt.onchange(parse(stringify(opt.original)));
@@ -272,6 +364,7 @@
 
         item.removeClass(types);
         item.addClass(className);
+        item.find(".change-type .itype").text(className);
     }
 
 })( jQuery );
