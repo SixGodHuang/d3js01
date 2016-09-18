@@ -912,7 +912,6 @@ function clickStage(sView, sd, si) {
             buttonView.selectAll("image").remove();
             pipelineData.splice(si, 1);
 
-          
             initPipeline();
             initAction();
         });
@@ -1110,6 +1109,53 @@ function clickAction(sView, sd, si) {
         .on("click", function (d, i) {
             buttonView.selectAll("image").remove();
         });
+
+
+
+    //show see pipline button
+    buttonView.append("image")
+        .attr("xlink:href", function (d, i) {
+            return "./svg/stage.svg";
+        })
+        .attr("id", function (d, i) {
+            return "button" + "-" + uuid.v1();
+        })
+        .attr("width", function (d, i) {
+            return svgButtonWidth;
+        })
+        .attr("height", function (d, i) {
+            return svgButtonHeight;
+        })
+        .attr("translateX", function (d, i) {
+            return sd.translateX;
+        })
+        .attr("translateY", function (d, i) {
+            return sd.translateY - (svgButtonHeight * 2);
+        })
+        .attr("transform", function (d, i) {
+            return "translate("
+                + this.attributes["translateX"].value + ","
+                + this.attributes["translateY"].value + ")";
+        })
+        .on("mouseover", function (d, i) {
+            d3.select(this)
+                .attr("transform",
+                    "translate("
+                    + (this.attributes["translateX"].value - svgButtonWidth / 2) + ","
+                    + (this.attributes["translateY"].value - svgButtonHeight / 2) + ") scale(2)");
+        })
+        .on("mouseout", function (d, i) {
+            d3.select(this)
+                .attr("transform",
+                    "translate("
+                    + this.attributes["translateX"].value + ","
+                    + this.attributes["translateY"].value + ") scale(1)");
+        })
+        .on("click", function (d, i) {
+            
+        });
+
+
 
 }
 
